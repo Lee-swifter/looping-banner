@@ -1,6 +1,8 @@
 package lic.swifter.banner;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Layout;
@@ -24,8 +26,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class LoopingViewPager extends ViewPager {
 
-    private int LOOP_INTERVAL ;
-    private int innerPosition ;
+    private long loopInterVal;
+
+    private boolean scrolling;
 
     private ScheduledExecutorService service;
     private ScheduledFuture future;
@@ -33,8 +36,13 @@ public class LoopingViewPager extends ViewPager {
     private Runnable looper = new Runnable() {
         @Override
         public void run() {
-            Log.i("swifter", "looooooooooooooooop.");
-            setCurrentItem((getCurrentItem() + 1) % getAdapter().getCount(), true);
+            Log.i("swifter", "loop called ...");
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    setCurrentItem(getCurrentItem()+1, true);
+                }
+            });
         }
     };
 
@@ -45,9 +53,8 @@ public class LoopingViewPager extends ViewPager {
     public LoopingViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        LOOP_INTERVAL = 2000;
+        loopInterVal = 3000L;
     }
-
 
     @Override
     public void setAdapter(PagerAdapter adapter) {
@@ -56,27 +63,54 @@ public class LoopingViewPager extends ViewPager {
 
         super.setAdapter(adapter);
 
-        innerPosition = Integer.MAX_VALUE / 2;
-        while (innerPosition % ((LoopingPagerAdapter) adapter).viewList.size() != 0) {
+        int innerPosition = Integer.MAX_VALUE / 2;
+        while (innerPosition % ((LoopingPagerAdapter) adapter).getPageCount() != 0) {
             innerPosition++;
         }
         setCurrentItem(innerPosition);
+    }
 
-        startScroll();
+    public int getCurrentPage() {
+        return getCurrentItem() % ((LoopingPagerAdapter) getAdapter()).getPageCount();
     }
 
     public void startScroll() {
         if(service == null)
             service = Executors.newScheduledThreadPool(1);
-        future = service.scheduleWithFixedDelay(looper, LOOP_INTERVAL, LOOP_INTERVAL, TimeUnit.MILLISECONDS);
+        future = service.scheduleWithFixedDelay(looper, loopInterVal, loopInterVal, TimeUnit.MILLISECONDS);
     }
 
     public void stopScroll() {
         future.cancel(true);
     }
 
-    public void setInterVal(int interVal) {
-        LOOP_INTERVAL = interVal;
+    public void setInterVal(long interVal) {
+        loopInterVal = interVal;
+    }
+
+    public void release() {
+        Log.i("swifter", "release called ....");
+        future.cancel(true);
+        service.shutdownNow();
+        service = null;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            Bundle bundle = (Bundle) state;
+            scrolling = bundle.getBoolean("scrolling");
+            state = bundle.getParcelable("parcelableState");
+        }
+        super.onRestoreInstanceState(state);
+    }
+
+    @Override
+    public Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("parcelableState", super.onSaveInstanceState());
+        bundle.putBoolean("scrolling", scrolling);
+        return super.onSaveInstanceState();
     }
 
 }
