@@ -5,7 +5,7 @@ android {
     buildToolsVersion "24.0.0"
 
     defaultConfig {
-        applicationId "lic.swifter.banner"
+        applicationId "lic.swifter.banner.demo"
         minSdkVersion 16
         targetSdkVersion 24
         versionCode 1
@@ -20,6 +20,6 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:24.0.0'
+    compile project(':banner')
+    compile 'com.android.support:appcompat-v7:24.1.0'
 }
