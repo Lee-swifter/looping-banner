@@ -1,8 +1,14 @@
 apply plugin: 'com.android.library'
 
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
 android {
+
     compileSdkVersion 24
     buildToolsVersion "24.0.0"
+
+    resourcePrefix "looping_banner_res_"
 
     defaultConfig {
         minSdkVersion 16
@@ -20,4 +26,79 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:24.1.0'
+}
+
+version = "0.0.1"
+group = "lic.swifter.banner"
+
+def siteUrl = 'https://github.com/Lee-swifter/looping-banner'
+def gitUrl = 'git@github.com:Lee-swifter/looping-banner.git'
+
+install {
+    repositories.mavenInstaller {
+        // 生成pom.xml和参数
+        pom {
+            project {
+                packaging 'aar'
+                name 'looping-banner'
+                description 'A banner which can infinite loop for Android.'
+                url siteUrl
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'lee-swifter'
+                        name '李斯维'
+                        email 'liwer2006@gmail.com'
+                    }
+                }
+
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+bintray {
+    user = properties.getProperty('bintray.user')
+    key = properties.getProperty('bintray.apikey')
+
+    configurations = ['archives']
+    pkg {
+        repo = 'maven'
+        name = 'looping-banner'
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ['Apache-2.0']
+        publish = true
+    }
 }
