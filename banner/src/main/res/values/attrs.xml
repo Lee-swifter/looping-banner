@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="looping_banner">
+        <attr name="loop_interval" format="integer" />
+        <attr name="auto_scroll" format="boolean" />
+    </declare-styleable>
+</resources>

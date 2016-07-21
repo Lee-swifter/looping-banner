@@ -1,20 +1,13 @@
 package lic.swifter.banner;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.Layout;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Adapter;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -27,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class LoopingViewPager extends ViewPager {
 
     private long loopInterVal;
-
+    private boolean autoScroll;
     private boolean scrolling;
 
     private ScheduledExecutorService service;
@@ -36,7 +29,6 @@ public class LoopingViewPager extends ViewPager {
     private Runnable looper = new Runnable() {
         @Override
         public void run() {
-            Log.i("swifter", "loop called ...");
             post(new Runnable() {
                 @Override
                 public void run() {
@@ -53,7 +45,10 @@ public class LoopingViewPager extends ViewPager {
     public LoopingViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        loopInterVal = 3000L;
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.looping_banner);
+        loopInterVal = typedArray.getInt(R.styleable.looping_banner_loop_interval, 3000);
+        autoScroll = typedArray.getBoolean(R.styleable.looping_banner_auto_scroll, false);
+        typedArray.recycle();
     }
 
     @Override
@@ -68,6 +63,9 @@ public class LoopingViewPager extends ViewPager {
             innerPosition++;
         }
         setCurrentItem(innerPosition);
+
+        if(autoScroll)
+            startScroll();
     }
 
     public int getCurrentPage() {
@@ -78,10 +76,12 @@ public class LoopingViewPager extends ViewPager {
         if(service == null)
             service = Executors.newScheduledThreadPool(1);
         future = service.scheduleWithFixedDelay(looper, loopInterVal, loopInterVal, TimeUnit.MILLISECONDS);
+        scrolling = true;
     }
 
     public void stopScroll() {
         future.cancel(true);
+        scrolling = false;
     }
 
     public void setInterVal(long interVal) {
@@ -89,7 +89,6 @@ public class LoopingViewPager extends ViewPager {
     }
 
     public void release() {
-        Log.i("swifter", "release called ....");
         future.cancel(true);
         service.shutdownNow();
         service = null;

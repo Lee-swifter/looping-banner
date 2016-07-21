@@ -1,29 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:banner="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <lic.swifter.banner.LoopingViewPager
         android:id="@+id/looping_view_pager"
         android:layout_width="match_parent"
-        android:layout_height="240dip" />
+        android:layout_height="240dip"
+        banner:auto_scroll="false"
+        banner:loop_interval="3000" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <Button
             android:id="@+id/start_scroll_button"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="startScroll"/>
+            android:text="startScroll" />
+
         <Button
             android:id="@+id/stop_scroll_button"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="stopScroll"/>
+            android:text="stopScroll" />
     </LinearLayout>
 
     <TextView
@@ -31,5 +37,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dip"
-        android:gravity="center"/>
+        android:gravity="center" />
 </LinearLayout>

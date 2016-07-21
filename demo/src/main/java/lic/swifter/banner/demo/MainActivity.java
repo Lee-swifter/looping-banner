@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         loopingViewPager = (LoopingViewPager) findViewById(R.id.looping_view_pager);
-        loopingViewPager.setInterVal(5000);
+        loopingViewPager.setInterVal(2000);
         loopingViewPager.setAdapter(new MainAdapter());
         loopingViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
