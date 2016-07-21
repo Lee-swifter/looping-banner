@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     private LoopingViewPager loopingViewPager;
     private TextView textView;
+    private boolean loopingEnable = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
         loopingViewPager = (LoopingViewPager) findViewById(R.id.looping_view_pager);
         loopingViewPager.setInterVal(2000);
+
         loopingViewPager.setAdapter(new MainAdapter());
         loopingViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -40,7 +42,16 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
+                if(loopingEnable) {
+                    switch (state) {
+                        case ViewPager.SCROLL_STATE_DRAGGING:
+                            loopingViewPager.stopScroll();
+                            break;
+                        case ViewPager.SCROLL_STATE_IDLE:
+                            loopingViewPager.startScroll();
+                            break;
+                    }
+                }
             }
         });
 

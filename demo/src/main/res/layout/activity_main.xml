@@ -9,7 +9,7 @@
         android:id="@+id/looping_view_pager"
         android:layout_width="match_parent"
         android:layout_height="240dip"
-        banner:auto_scroll="false"
+        banner:auto_scroll="true"
         banner:loop_interval="3000" />
 
     <LinearLayout

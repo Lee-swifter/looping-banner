@@ -14,7 +14,20 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
+ * Copyright {2016} {Lee-swifter}
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * <p/>
  * Created by lic on 16-7-12.
  */
 public class LoopingViewPager extends ViewPager {
@@ -32,7 +45,7 @@ public class LoopingViewPager extends ViewPager {
             post(new Runnable() {
                 @Override
                 public void run() {
-                    setCurrentItem(getCurrentItem()+1, true);
+                    setCurrentItem(getCurrentItem() + 1, true);
                 }
             });
         }
@@ -53,7 +66,7 @@ public class LoopingViewPager extends ViewPager {
 
     @Override
     public void setAdapter(PagerAdapter adapter) {
-        if(!(adapter instanceof LoopingPagerAdapter))
+        if (!(adapter instanceof LoopingPagerAdapter))
             throw new IllegalArgumentException("adapter must be a subclass of LoopingViewPager.Adapter");
 
         super.setAdapter(adapter);
@@ -64,7 +77,7 @@ public class LoopingViewPager extends ViewPager {
         }
         setCurrentItem(innerPosition);
 
-        if(autoScroll)
+        if (autoScroll)
             startScroll();
     }
 
@@ -73,14 +86,21 @@ public class LoopingViewPager extends ViewPager {
     }
 
     public void startScroll() {
-        if(service == null)
+        if (scrolling)
+            return;
+
+        if (service == null)
             service = Executors.newScheduledThreadPool(1);
         future = service.scheduleWithFixedDelay(looper, loopInterVal, loopInterVal, TimeUnit.MILLISECONDS);
         scrolling = true;
     }
 
     public void stopScroll() {
-        future.cancel(true);
+        if (!scrolling)
+            return;
+
+        if (future != null)
+            future.cancel(true);
         scrolling = false;
     }
 
@@ -89,9 +109,12 @@ public class LoopingViewPager extends ViewPager {
     }
 
     public void release() {
-        future.cancel(true);
-        service.shutdownNow();
-        service = null;
+        if (future != null)
+            future.cancel(true);
+        if (service != null) {
+            service.shutdownNow();
+            service = null;
+        }
     }
 
     @Override
