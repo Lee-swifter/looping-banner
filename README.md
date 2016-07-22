@@ -3,6 +3,19 @@ An infinite loop banner view for Android. This library can be used for app's ban
 
 ---
 
+## Import:
+
+##### Gradle:
+    compile 'lic.swifter.banner:banner:0.0.1'
+
+##### Maven:
+    <dependency>
+      <groupId>lic.swifter.banner</groupId>
+      <artifactId>banner</artifactId>
+      <version>0.0.1</version>
+      <type>pom</type>
+    </dependency>
+
 ## How to use:
 
 ```xml
