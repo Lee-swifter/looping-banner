@@ -18,7 +18,7 @@ public class MainActivity extends Activity {
 
     private LoopingViewPager loopingViewPager;
     private TextView textView;
-    private boolean loopingEnable = true;
+    private final boolean loopingEnable = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

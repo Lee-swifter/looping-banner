@@ -25,7 +25,7 @@ public class LoopingViewPager extends ViewPager {
     private ScheduledExecutorService service;
     private ScheduledFuture future;
 
-    private Runnable looper = new Runnable() {
+    private final Runnable looper = new Runnable() {
         @Override
         public void run() {
             post(new Runnable() {
